@@ -9,7 +9,6 @@ const create_post = async(req , resp)=>{
     post.Title = req.body.Title;
     post.Text = req.body.Text;
     post.Created_By = req.body.Created_By;
-    post.Uploaded_On  = req.body.Uploaded_On;
     post.Likes = req.body.Likes;
     post.User = user._id;
     await post.save();
@@ -38,6 +37,7 @@ const delete_post =  async(req , resp)=>{
             i++;
         }
         user.Post.splice(i,1);
+        await user.save(); 
         post = await Post.findOneAndDelete(req.params);
         resp.send(user);
 

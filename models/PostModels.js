@@ -14,8 +14,8 @@ const PostDetails = mongoose.Schema({
         required : true
     },
     Uploaded_On : {
-        type : String, 
-        required : true
+        type : Date, 
+        default : Date.now
     },
     Likes : {
         type : Number, 
@@ -26,7 +26,7 @@ const PostDetails = mongoose.Schema({
         ref : 'User',
         required : true
     }
-});
+},{timestamps : true});
 
 const Post = mongoose.model("Post",PostDetails);
 
