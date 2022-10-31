@@ -40,8 +40,6 @@ const delete_post =  async(req , resp)=>{
         await user.save(); 
         post = await Post.findOneAndDelete(req.params);
         resp.send(user);
-
-
         resp.send("Post deleted!!!");
     }
     catch(err){
@@ -60,7 +58,7 @@ const update_post = async(req , resp)=>{
          resp.send("Post Updated!!!!");
     } 
     catch(err){
-        resp.send("Data doesnot exist");
+        resp.send("Post not found");
     }  
 }
 
@@ -71,7 +69,7 @@ const update_post = async(req , resp)=>{
         await post.save();
         resp.send(post);
     }catch(err){
-        resp.send("Post with this ObjectId was not found");
+        resp.send("Post not found");
     }
 }
 
