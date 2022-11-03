@@ -1,39 +1,44 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const UserDetails = mongoose.Schema({
     UserName : {
         type : String, 
-        // minlength : 2,
+        minlength : 2,
+        unique : true,
         required : true
     },
     Email : {
         type : String,
         unique : true, 
-        required : true
+        required : true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Email is Invalid");
+            }
+        }
     },
     Password : {
         type : String, 
-        // minlength : 8,
-        required : true
+        minlength : 8,
+        required : true,
     },
     Mobile_no : {
-        type : Number,
-        // maxlength : 10, 
+        type : String,
+        maxlength : 10,
+        minlength : 10,
         required : true
     },
     DOB : {
         type : String,
-        // maxlength : 10, 
         required : true
     },
     BIO : {
         type : String,
-        required : true
     },
     Post : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : 'Post',
-        required : true
     }]
 })
 

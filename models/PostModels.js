@@ -19,6 +19,7 @@ const PostDetails = mongoose.Schema({
     },
     Likes : {
         type : Number, 
+        default : 0,
         required : true
     },
     User : {

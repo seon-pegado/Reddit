@@ -5,11 +5,11 @@ const User = require('../models/UserModels');
 const create_post = async(req , resp)=>{
     const user = await User.findOne({_id: req.params._id});
 
-    const post = new Post();
-    post.Title = req.body.Title;
-    post.Text = req.body.Text;
-    post.Created_By = req.body.Created_By;
-    post.Likes = req.body.Likes;
+    const post = new Post(req.body);
+    // post.Title = req.body.Title;
+    // post.Text = req.body.Text;
+    // post.Created_By = req.body.Created_By;
+    // post.Likes = req.body.Likes;
     post.User = user._id;
     await post.save();
 
