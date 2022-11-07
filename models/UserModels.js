@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const UserDetails = mongoose.Schema({
     UserName : {
@@ -35,12 +36,18 @@ const UserDetails = mongoose.Schema({
     },
     BIO : {
         type : String,
-    },
-    Post : [{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'Post',
-    }]
+    }
 })
+
+UserDetails.pre('save', async function(next){
+    try {
+        this.Password = await bcrypt.hash(this.Password, 10);
+
+    } catch (error) {
+        next(error);
+    }
+})
+
 
 const User = mongoose.model("User",UserDetails);
 

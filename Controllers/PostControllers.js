@@ -1,75 +1,80 @@
+const e = require('express');
 const Post = require('../models/PostModels');
+const { findOneAndDelete } = require('../models/UserModels');
 const User = require('../models/UserModels');
 
-
-const create_post = async(req , resp)=>{
-    const user = await User.findOne({_id: req.params._id});
+// Creating a post------------
+const create_post = async (req, resp) => {
+    const user = await User.findOne({ _id : req.params._id});
 
     const post = new Post(req.body);
-    // post.Title = req.body.Title;
-    // post.Text = req.body.Text;
-    // post.Created_By = req.body.Created_By;
-    // post.Likes = req.body.Likes;
     post.User = user._id;
     await post.save();
-
-    user.Post.push(post._id);
     await user.save();
-    resp.send(post);
-    console.log(post);
-    // let data = new post(req.body);
-    // let ans = await data.save();
-    // resp.send("Post created!!!");
+    resp.status(200).send({success: true, msg: post});
 }
 
-const get_post = async(req , resp)=>{
-    let data=await Post.find();
-    resp.send(data);
+// To get Posts-----------------------------
+const get_post = async (req, resp) => {
+    const user = await User.findOne({Email : req.body.email});
+    let post = await Post.find({User : user._id});
+    resp.status(200).send({success: true, msg: post});
 }
 
-const delete_post =  async(req , resp)=>{
-    try{
-        let post = await Post.findOne({_id : req.params._id});
-        let user = await User.findOne({_id : post.User});
-        let arr = user.Post;
-        let i=0;
-        while(arr[i] != req.params){
-            i++;
+// To delete a post----------------------------------
+const delete_post = async (req, resp) => {
+    try {
+        let post = await Post.findOne(req.params);
+        let postId = post.User;
+        let user = await User.findOne({Email : req.body.email});
+        let userId = user._id;
+        console.log(postId + "    " + userId);
+        if (postId === userId) {
+            
+            await findOneAndDelete(post);
+            resp.status(200).send({success: true, msg:"Post deleted!!!"});
+        } else {
+            resp.status(200).send({success: false, msg: "Post not found!!!"});
         }
-        user.Post.splice(i,1);
-        await user.save(); 
-        post = await Post.findOneAndDelete(req.params);
-        resp.send(user);
-        resp.send("Post deleted!!!");
     }
-    catch(err){
-        resp.send(err);
+    catch (err) {
+        resp.status(400).send({ success: false, msg: e.msg });
     }
 }
 
-const update_post = async(req , resp)=>{
-    try{
+// To Update a post-----------------------------------
+const update_post = async (req, resp) => {
+    try {
         let data = await Post.findOneAndUpdate(
-        req.params,
-         {
-             $set:post.req.body
-         }
+            req.params,
+            {
+                $set: post.req.body
+            }
         );
-         resp.send("Post Updated!!!!");
-    } 
-    catch(err){
-        resp.send("Post not found");
-    }  
+        if(data){
+            resp.status(200).send({success: true, msg: "Post Updated!!!!"});
+        }else{
+            resp.status(200).send({success: false, msg: "Post not Found"});   
+        }
+    }
+    catch (err) {
+        resp.status(400).send({success: true, msg: e.msg});
+    }
 }
 
- const likes_post = async(req , resp)=>{
-    try{
-        const post = await Post.findOne({_id : req.params._id});
-        post.Likes ++;
+// TO increment Likes on a particular post------------------------
+const likes_post = async (req, resp) => {
+    try {
+        const post = await Post.findOne({ _id: req.params._id });
+        post.Likes++;
         await post.save();
-        resp.send(post);
-    }catch(err){
-        resp.send("Post not found");
+        if (post) {
+            resp.status(200).send({success: true, msg: "Likes Updated!!!"});
+        } else {
+            resp.status(200).send({success: false, msg: "Post not found!!!"})
+        }
+    } catch (err) {
+        resp.status(400).send({success: false, msg: e.msg});
     }
 }
 
