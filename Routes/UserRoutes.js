@@ -13,7 +13,7 @@ User_routes.get('/',auth,get_user)
 // deleting data of  User------------
 User_routes.delete('/:_id',auth,delete_user)
 // updating an User's Data--------------
-User_routes.put('/:_id',auth,update_user)
+User_routes.put('/:_id',update_user)
 
 module.exports = {
     User_routes

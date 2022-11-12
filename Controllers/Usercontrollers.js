@@ -15,11 +15,13 @@ const create_user = async (req, resp) => {
 const login_user = async (req, resp) => {
     try {
         const user = await User.findOne({ Email: req.body.email });
+        console.log(user);
         if (user) {
-            const pass = await bcrypt.compare(req.body.password, user.Password);
+            const pass = await bcrypt.compare(req.body.password,user.Password);
+            console.log(pass);
             if (pass) {
                 const token = await jwt.sign({Email : req.body.email} , process.env.KEY)
-                resp.status(200).send({success: true , msg:"Logged In"+token});
+                resp.status(200).send({success: true , msg:"Logged In", accessToken: token});
             }
             else {
                 resp.status(200).send({ success: false, msg: "Incorrect login credentials" });
@@ -29,13 +31,14 @@ const login_user = async (req, resp) => {
             resp.status(200).send({ success: false, msg: "Account With this Email doesnot exist" });
         }
     } catch (err) {
+        console.log(err);
         resp.status(400).send({ success: false, msg: err })
     }
 }
 
 //To Get the data of User API----------------------
 const get_user = async (req, resp) => {
-    let data = await User.findOne({Email : req.body.email});
+    let data = await User.findOne({Email : req.user.Email});
     resp.status(200).send(data);
 }
 
@@ -65,6 +68,7 @@ const update_user = async (req, resp) => {
             }
         );
         if (data) {
+            data.save();
             resp.status(200).send("Data Updated!!!!");
         }
         else {

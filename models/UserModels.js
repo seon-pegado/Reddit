@@ -22,7 +22,7 @@ const UserDetails = mongoose.Schema({
     Password : {
         type : String, 
         minlength : 8,
-        required : true,
+        required : true
     },
     Mobile_no : {
         type : String,
@@ -42,7 +42,7 @@ const UserDetails = mongoose.Schema({
 UserDetails.pre('save', async function(next){
     try {
         this.Password = await bcrypt.hash(this.Password, 10);
-
+        next();
     } catch (error) {
         next(error);
     }

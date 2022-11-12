@@ -5,14 +5,14 @@ const auth = require("../Middewares/auth");
 const Post_routes = express();
 
 // for posting a data---
-Post_routes.post('/:_id', create_post)
+Post_routes.post('/', auth , create_post)
 Post_routes.get('/', auth , get_post)
 // deleting a post----
 Post_routes.delete('/:_id', auth , delete_post)
 // Updating a post-----
-Post_routes.put('/:_id', update_post)
+Post_routes.put('/:_id', auth , update_post)
 //Liking a post--------
-Post_routes.put('/likes/:_id', likes_post)
+Post_routes.put('/likes/:_id', auth , likes_post)
 
 module.exports = {
     Post_routes

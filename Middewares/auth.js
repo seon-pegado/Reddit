@@ -8,7 +8,7 @@ const auth = async (req , res , next)=>{
     jwt.verify(token , process.env.KEY,(err,user)=>{
         if(err) return res.status(400).send({success: false , msg: err});
         req.user = user;
-        console.log (req.user);
+        console.log(req.user);
         next();
     });
 }
