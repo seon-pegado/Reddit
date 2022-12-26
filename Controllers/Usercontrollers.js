@@ -1,26 +1,42 @@
 require('dotenv').config();
 const User = require('../models/UserModels');
 const bcrypt = require('bcryptjs');
-const e = require('express');
 const jwt = require('jsonwebtoken');
+const nodemailer  = require('nodemailer');
+
+let mailTransporter = nodemailer.createTransport({
+    service: 'outlook',
+    auth: {
+        user:process.env.EMAIL,
+        pass:process.env.PASS
+    },
+    port : 465
+})
 
 //Creating a user API----------------------------------
-const create_user = async (req, resp) => {
+const CreateUser = async (req, resp) => {
     let data = new User(req.body);
+    data.ProfilePic = req.file.buffer;
     await data.save();
+    
     resp.status(200).json({ success: true , msg: "Data inserted!!!!"});
+
 }
 
 //Creating a login API------------------------------------
-const login_user = async (req, resp) => {
+const LoginUser = async (req, resp) => {
     try {
         const user = await User.findOne({ Email: req.body.email });
-        console.log(user);
         if (user) {
             const pass = await bcrypt.compare(req.body.password,user.Password);
-            console.log(pass);
             if (pass) {
-                const token = await jwt.sign({Email : req.body.email} , process.env.KEY)
+                const token = await jwt.sign({Email : req.body.email} , process.env.KEY);
+                mailTransporter.sendMail({
+                    from: process.env.EMAIL,
+                    to: user.Email,
+                    subject: "Successful login for Reddit Clone",
+                    Text: "Welcome"+user.UserName+"to Reddit Clone Website you have successfully logged in into your account.Hope you have a good time with us"
+                })
                 resp.status(200).send({success: true , msg:"Logged In", accessToken: token});
             }
             else {
@@ -28,22 +44,21 @@ const login_user = async (req, resp) => {
             }
         }
         else {
-            resp.status(200).send({ success: false, msg: "Account With this Email doesnot exist" });
+            resp.status(200).send({ success: false, msg: "Incorrect Login Credentials" });
         }
     } catch (err) {
-        console.log(err);
-        resp.status(400).send({ success: false, msg: err })
+        resp.status(400).send({ success: false, Error: err.message })
     }
 }
 
 //To Get the data of User API----------------------
-const get_user = async (req, resp) => {
-    let data = await User.findOne({Email : req.user.Email});
+const GetUser = async (req, resp) => {
+    let data = await User.findOne({Email : req.user.Email}).select("-ProfilePic -Password");
     resp.status(200).send(data);
 }
 
 // To delete the data of User API----------------------
-const delete_user = async (req, resp) => {
+const DeleteUser = async (req, resp) => {
     try {
         let data = await User.findOne(req.params);
         if (data) {
@@ -54,12 +69,12 @@ const delete_user = async (req, resp) => {
         }
     }
     catch (err) {
-        resp.status(400).send({success: false , msg: e.msg});
+        resp.status(400).send({success: false , Error: err.message});
     }
 }
 
 // To update the data of User API------------------------------------
-const update_user = async (req, resp) => {
+const UpdateUser = async (req, resp) => {
     try {
         let data = await User.findOneAndUpdate(
             req.params,
@@ -76,14 +91,14 @@ const update_user = async (req, resp) => {
         }
     }
     catch (err) {
-        resp.status(400).send({success: false , msg: e.msg});
+        resp.status(400).send({success: false , Error: err.message});
     }
 }
 
 module.exports = {
-    create_user,
-    login_user,
-    get_user,
-    delete_user,
-    update_user
+    CreateUser,
+    LoginUser,
+    GetUser,
+    DeleteUser,
+    UpdateUser
 }

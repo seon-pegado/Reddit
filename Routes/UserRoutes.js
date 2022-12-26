@@ -1,20 +1,21 @@
 const express  = require('express');
-const {create_user,login_user,get_user,delete_user,update_user} = require('../Controllers/UserControllers.js');
+const {CreateUser , LoginUser, GetUser, DeleteUser, UpdateUser} = require('../Controllers/UserControllers.js');
 const auth = require('../Middewares/auth');
+const {ProfileData , PostData } = require('../Middewares/multer.js');
 
-const User_routes = express.Router();
+const UserRoutes = express.Router();
 
 // for creating a user login----
-User_routes.post('/', create_user)
+UserRoutes.post('/', ProfileData.single("ProfilePic") , CreateUser)
 //login user---------
-User_routes.post('/login',login_user)
+UserRoutes.post('/login', LoginUser)
 // Get the data of user ------------------
-User_routes.get('/',auth,get_user)
+UserRoutes.get('/',auth, GetUser)
 // deleting data of  User------------
-User_routes.delete('/:_id',auth,delete_user)
+UserRoutes.delete('/:_id',auth, DeleteUser)
 // updating an User's Data--------------
-User_routes.put('/:_id',update_user)
+UserRoutes.put('/:_id', UpdateUser)
 
 module.exports = {
-    User_routes
+    UserRoutes
 };

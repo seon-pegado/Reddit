@@ -1,19 +1,20 @@
 const express = require('express');
-const {create_post,get_post,delete_post,update_post,likes_post} = require('../Controllers/PostControllers');
+const {CreatePost , GetPost, DeletePost, UpdatePost, LikesPost} = require('../Controllers/PostControllers');
 const auth = require("../Middewares/auth");
+const {ProfileData ,PostData} = require("../Middewares/multer");
 
-const Post_routes = express();
+const PostRoutes = express();
 
 // for posting a data---
-Post_routes.post('/', auth , create_post)
-Post_routes.get('/', auth , get_post)
+PostRoutes.post('/', auth , PostData.array("PostFile",4) , CreatePost)
+PostRoutes.get('/', auth , GetPost)
 // deleting a post----
-Post_routes.delete('/:_id', auth , delete_post)
+PostRoutes.delete('/:_id', auth , DeletePost)
 // Updating a post-----
-Post_routes.put('/:_id', auth , update_post)
+PostRoutes.put('/:_id', auth , UpdatePost)
 //Liking a post--------
-Post_routes.put('/likes/:_id', auth , likes_post)
+PostRoutes.put('/likes/:_id', auth , LikesPost)
 
 module.exports = {
-    Post_routes
+    PostRoutes
 };

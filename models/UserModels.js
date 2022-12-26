@@ -36,6 +36,9 @@ const UserDetails = mongoose.Schema({
     },
     BIO : {
         type : String,
+    },
+    ProfilePic :{
+        type : Buffer,
     }
 })
 

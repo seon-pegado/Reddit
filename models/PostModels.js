@@ -9,10 +9,6 @@ const PostDetails = mongoose.Schema({
         type : String, 
         required : true
     },
-    Created_By : {
-        type : String,
-        required : true
-    },
     Uploaded_On : {
         type : Date, 
         default : Date.now
@@ -26,7 +22,10 @@ const PostDetails = mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
         required : true
-    }
+    },
+    PostFile : [{
+        type : Buffer
+    }]
 },{timestamps : true});
 
 const Post = mongoose.model("Post",PostDetails);

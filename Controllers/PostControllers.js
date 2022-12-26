@@ -2,23 +2,28 @@ const Post = require('../models/PostModels');
 const User = require('../models/UserModels');
 
 // Creating a post------------
-const create_post = async (req, resp) => {
+const CreatePost = async (req, resp) => {
     const user = await User.findOne({Email : req.user.Email});
     const post = new Post(req.body);
+    const file = req.files;
+    console.log(file);
+    for(var i=0 ; i < file.length ; i++)
+    {
+        post.PostFile[i] = file[i].buffer;
+    }
     post.User = user._id;
     await post.save();
-    await user.save();
     resp.status(200).send({success: true, msg: post});
 }
 
 // To get Posts-----------------------------
-const get_post = async (req, resp) => {
-    let post = await Post.find();
+const GetPost = async (req, resp) => {
+    let post = await Post.find().select("-PostFile");
     resp.status(200).send({success: true, msg: post});
 }
 
 // To delete a post----------------------------------
-const delete_post = async (req, resp) => {
+const DeletePost = async (req, resp) => {
     try {
         let post = await Post.findOne({_id : req.params._id});
         // let postId = post.User.toString();
@@ -39,7 +44,7 @@ const delete_post = async (req, resp) => {
 }
 
 // To Update a post-----------------------------------
-const update_post = async (req, resp) => {
+const UpdatePost = async (req, resp) => {
     try {
         let data = await Post.findOne({_id : req.params._id});
         let user  = await User.findOne({Email : req.user.email});
@@ -64,7 +69,7 @@ const update_post = async (req, resp) => {
 }
 
 // TO increment Likes on a particular post------------------------
-const likes_post = async (req, resp) => {
+const LikesPost = async (req, resp) => {
     try {
         const post = await Post.findOne({ _id: req.params._id });
         await post.save();
@@ -80,9 +85,9 @@ const likes_post = async (req, resp) => {
 }
 
 module.exports = {
-    create_post,
-    get_post,
-    delete_post,
-    update_post,
-    likes_post
+    CreatePost,
+    GetPost,
+    DeletePost,
+    UpdatePost,
+    LikesPost
 }
