@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 require('./mongodb.js');
 const {UserRoutes} = require('./Routes/UserRoutes');
-const {PostRoutes} = require('./Routes/PostRoutes');
-
+const {PostRoutes} = require('./Routes/PostRoutes')
+require('./socket.io/server')
 const app = express();
 app.use(express.json());
 

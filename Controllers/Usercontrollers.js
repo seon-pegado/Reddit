@@ -30,7 +30,7 @@ const LoginUser = async (req, resp) => {
         if (user) {
             const pass = await bcrypt.compare(req.body.password,user.Password);
             if (pass) {
-                const token = await jwt.sign({Email : req.body.email} , process.env.KEY);
+                const token = await jwt.sign({_id : user._id , Email : req.body.email} , process.env.KEY);
                 mailTransporter.sendMail({
                     from: process.env.EMAIL,
                     to: user.Email,
