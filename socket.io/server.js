@@ -10,28 +10,28 @@ require('./client')
 
 io.use(async(socket , next)=>{
     const token = socket.handshake.headers.authorization;
-    console.log(token);
     if(!token){
         next(new Error ("You are not Authorized"));
     }else{
         const detail = jwt.verify(token , process.env.KEY)
-        console.log(detail)
-        // const user = await User.findById({_id : detail._id})
-        // const username = user.UserName;
+        const user = await User.findById({_id : detail._id})
+        socket.UserName = user.UserName;
+        console.log(socket.UserName);
+        next();
     }
 });
 io.on('connection' , socket =>{
     console.log(socket.id);
     socket.on("sendMessage" , (message , room) =>{
         if(room === ''){
-            socket.emits("recieveMessage"  , message)
+            socket.broadcast.emits("recieveMessage"  , message)
         }else{
             socket.to(room).emits("recieveMessage"  , message)
         }
     })
-    socket.on('joinRoom' , (room , cb)=>{
+    socket.on('joinRoom' , room =>{
         socket.join(room)
-        cb('Joined Room:'+room)
+        console.log(socket.Username+"joined room"+room);
     })
 });
 

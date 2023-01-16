@@ -31,12 +31,12 @@ const LoginUser = async (req, resp) => {
             const pass = await bcrypt.compare(req.body.password,user.Password);
             if (pass) {
                 const token = await jwt.sign({_id : user._id , Email : req.body.email} , process.env.KEY);
-                mailTransporter.sendMail({
-                    from: process.env.EMAIL,
-                    to: user.Email,
-                    subject: "Successful login for Reddit Clone",
-                    Text: "Welcome"+user.UserName+"to Reddit Clone Website you have successfully logged in into your account.Hope you have a good time with us"
-                })
+                // mailTransporter.sendMail({
+                //     from: process.env.EMAIL,
+                //     to: user.Email,
+                //     subject: "Successful login for Reddit Clone",
+                //     Text: "Welcome"+user.UserName+"to Reddit Clone Website you have successfully logged in into your account.Hope you have a good time with us"
+                // })
                 resp.status(200).send({success: true , msg:"Logged In", accessToken: token});
             }
             else {
