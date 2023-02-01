@@ -18,6 +18,10 @@ const PostDetails = mongoose.Schema({
         default : 0,
         required : true
     },
+    LikedBy : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'User'
+    }],
     User : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',

@@ -15,9 +15,15 @@ io.use(async(socket , next)=>{
     }else{
         const detail = jwt.verify(token , process.env.KEY)
         const user = await User.findById({_id : detail._id})
-        socket.UserName = user.UserName;
-        console.log(socket.UserName);
-        next();
+        if(user){
+            socket.UserName = user.UserName;
+            console.log(socket.UserName);
+            next();
+        }
+        else{
+            next(new Error("You are not authorized"));
+        }
+       
     }
 });
 io.on('connection' , socket =>{

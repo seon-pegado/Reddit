@@ -71,14 +71,20 @@ const UpdatePost = async (req, resp) => {
 // TO increment Likes on a particular post------------------------
 const LikesPost = async (req, resp) => {
     try {
-        const post = await Post.findOne({ _id: req.params._id });
-        await post.save();
-        if (post) {
-            post.Likes++;
-            resp.status(200).send({success: true, msg: "Likes Updated!!!"});
-        } else {
-            resp.status(200).send({success: false, msg: "Post not found!!!"})
-        }
+        const post = await Post.findById(req.params);
+        if(post.LikedBy.includes(req.user._id)){//if the person has already liked the post
+            const i = post.LikedBy.indexof(req.user._id);
+            post.LikedBy.splice(i,1);
+            post.Likes = post.LikedBy.length;
+            await post.save();
+            resp.status(400).send({success : true , msg : "You have removed the LIKE from the post of id : "+post._id});
+        }   
+        else{
+            post.LikedBy.push(req.user._id);
+            post.Likes = post.LikedBy.length;
+            await post.save();
+            resp.status(400).send({success : true , msg : "You have LIKED the post of id : "+post._id});
+        }   
     } catch (err) {
         resp.status(400).send({success: false, msg: err.msg});
     }

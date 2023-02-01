@@ -9,6 +9,7 @@ socket.on('connect' , (message , room) =>{
 })
 socket.on("recieveMessage" , message =>{
     console.log(message);
+    displayMessage(message);
 })
 
 

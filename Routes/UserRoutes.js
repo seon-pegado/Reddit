@@ -14,7 +14,7 @@ UserRoutes.get('/',auth, GetUser)
 // deleting data of  User------------
 UserRoutes.delete('/:_id',auth, DeleteUser)
 // updating an User's Data--------------
-UserRoutes.put('/:_id', UpdateUser)
+UserRoutes.put('/:_id' , UpdateUser)
 
 module.exports = {
     UserRoutes
